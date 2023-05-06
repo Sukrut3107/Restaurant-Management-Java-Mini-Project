@@ -1,4 +1,5 @@
 import Entities.*;
+import service.AccountHandler;
 
 import java.util.List;
 import java.util.Scanner;
@@ -7,19 +8,35 @@ import java.util.Scanner;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
 
-        private List<Sales> salesList;
-        private List<Expense> expenseList;
-        private double availableMoney;
-        private List<Ingredient> ingredientList;
-        private List<Recipe> recipeList;
+        private static List<Sales> salesList;
+        private static List<Expense> expenseList;
+        private static double availableMoney;
+        private static List<Ingredient> ingredientList;
+        private static List<Recipe> recipeList;
+
+        private static AccountHandler accountHandler;
 
     public static void main(String[] args) {
         //Event loop is infinite loop
         CommandType currentCommand = CommandType.NO_COMMAND;
         while (true){
         if(currentCommand == CommandType.NO_COMMAND){
-            displayPrompt();
+            int selectedNumber = displayPrompt();
+            currentCommand = CommandType.values()[selectedNumber];
         }
+        else if(currentCommand == CommandType.VIEW_TOTAL_SALES){
+            accountHandler.printSales(salesList);
+            currentCommand = CommandType.NO_COMMAND;
+        }
+        else if(currentCommand == CommandType.VIEW_TOTAL_EXPENSES){
+            accountHandler.printExpenses(expenseList);
+            currentCommand = CommandType.NO_COMMAND;
+        }
+        else if(currentCommand == CommandType.VIEW_TOTAL_PROFIT){
+            accountHandler.printProfit(salesList,expenseList);
+            currentCommand = CommandType.NO_COMMAND;
+        }
+
         if(currentCommand == CommandType.EXIT){
             System.exit(0);
         }
