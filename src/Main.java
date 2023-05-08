@@ -1,10 +1,14 @@
 import Entities.*;
 import exceptions.IngredientNofFoundException;
+import exceptions.InsufficientIngredientException;
 import exceptions.InsufficientMoneyException;
+import exceptions.RecipeNotFoundException;
 import service.AccountHandler;
 import service.IngredientHandler;
+import service.RecipeHandler;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
@@ -19,12 +23,14 @@ public class Main {
         //for Ingredient Handler
         private static IngredientHandler ingredientHandler;
         private static AccountHandler accountHandler;
+        private static RecipeHandler recipeHandler;
 
     public static void main(String[] args) {
         //Event loop is infinite loop
         CommandType currentCommand = CommandType.NO_COMMAND;
         Ingredient selectedIngredient = null;
         double ingredientQty = 0;
+        Recipe selectedRecipe = null;
         while (true) {
             try {
                 if (currentCommand == CommandType.NO_COMMAND) {
@@ -59,10 +65,17 @@ public class Main {
                     accountHandler.printProfit(salesList, expenseList);
                     currentCommand = CommandType.NO_COMMAND;
                 }
-
+                    else if(currentCommand == CommandType.PLACE_ORDER){
+                        selectedRecipe = selectRecipe();
+                        recipeHandler.checkIfPossibleToPrepareRecipe(selectedRecipe,ingredientList);
+                }
                 if (currentCommand == CommandType.EXIT) {
                     System.exit(0);
                 }
+            }
+            catch (InsufficientIngredientException ex){
+                Map<Ingredient, Double> insufficientIngredients = ex.getInsufficientIngredients();
+
             }
             catch (InsufficientMoneyException ex){
                 System.out.println(ex.getMessage());
@@ -112,6 +125,17 @@ public class Main {
                 ingredientList.get(i).setQty(oldQty+qtyOrdered);
             }
         }
+    }
+
+    public static Recipe selectRecipe(){
+        Scanner sc = new Scanner(System.in);
+        String recipeName = sc.nextLine();
+        for (int i = 0; i < recipeList.size(); i++) {
+            if(recipeList.get(i).getName().equals(recipeName)){
+                return recipeList.get(i);
+            }
+        }
+        throw new RecipeNotFoundException("Recipe "+recipeName+" not found !");
     }
 
 

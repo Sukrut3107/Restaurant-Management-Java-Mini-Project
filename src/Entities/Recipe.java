@@ -5,10 +5,10 @@ import java.util.Map;
 
 public class Recipe {
     private String name;
-    private Map<Ingredient,Integer> composition;
+    private Map<Ingredient, Double> composition;
     private double amount;
 
-    public Recipe(String name,Map<Ingredient,Integer> composition,double amount){
+    public Recipe(String name,Map<Ingredient,Double> composition,double amount){
         this.name = name;
         this.composition = composition;
         this.amount = amount;
@@ -22,11 +22,11 @@ public class Recipe {
         this.name = name;
     }
 
-    public Map<Ingredient, Integer> getComposition() {
+    public Map<Ingredient, Double> getComposition() {
         return composition;
     }
 
-    public void setComposition(Map<Ingredient, Integer> composition) {
+    public void setComposition(Map<Ingredient, Double> composition) {
         this.composition = composition;
     }
 
