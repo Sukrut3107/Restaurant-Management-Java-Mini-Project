@@ -8,5 +8,6 @@ public enum CommandType {
     VIEW_TOTAL_EXPENSES,
     VIEW_TOTAL_PROFIT,
     PLACE_ORDER,
-    EXIT
+    EXIT,
+    INPUT_INGREDIENT_QTY;
 }
