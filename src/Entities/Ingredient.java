@@ -34,4 +34,15 @@ public class Ingredient {
     public void setRate(double rate) {
         this.rate = rate;
     }
+
+    @Override
+    public boolean equals(Object object){
+        if(this.getClass()!=object){
+            return false;
+        }
+        else {
+            Ingredient otherIngredient = (Ingredient) object;
+            return this.getName().equals(otherIngredient.getName());
+        }
+    }
 }

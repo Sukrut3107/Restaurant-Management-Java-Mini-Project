@@ -24,4 +24,10 @@ public class Sales {
     public void setAmount(double amount) {
         this.amount = amount;
     }
+
+    @Override
+    public String toString(){
+        return "Recipe = "+ this.getOrder().getRecipe().getName()+", Amount= "+     this.getAmount();
+
+    }
 }

@@ -35,4 +35,9 @@ public class Expense {
     public void setExpenseType(ExpenseType expenseType) {
         this.expenseType = expenseType;
     }
+@Override
+    public String toString(){
+        return this.getAmount() +", ExpenseType= " +this.getExpenseType();
+
+    }
 }
