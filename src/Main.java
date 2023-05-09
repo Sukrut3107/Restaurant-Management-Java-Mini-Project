@@ -3,10 +3,12 @@ import exceptions.IngredientNofFoundException;
 import exceptions.InsufficientIngredientException;
 import exceptions.InsufficientMoneyException;
 import exceptions.RecipeNotFoundException;
+import io.IngredientsIO;
 import service.AccountHandler;
 import service.IngredientHandler;
 import service.RecipeHandler;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,14 +27,18 @@ public class Main {
         private static IngredientHandler ingredientHandler;
         private static AccountHandler accountHandler;
         private static RecipeHandler recipeHandler;
+        private static IngredientsIO ingredientsIO;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         //Event loop is infinite loop
+        ingredientsIO = new IngredientsIO();
+        ingredientHandler = new IngredientHandler();
         CommandType currentCommand = CommandType.NO_COMMAND;
         Ingredient selectedIngredient = null;
         double ingredientQty = 0;
         Recipe selectedRecipe = null;
         Map<Ingredient, Double> insufficientIngredients = null;
+        ingredientList = ingredientsIO.readIngredientList("resources/ingredients.txt");
         while (true) {
             try {
                 if (currentCommand == CommandType.NO_COMMAND) {

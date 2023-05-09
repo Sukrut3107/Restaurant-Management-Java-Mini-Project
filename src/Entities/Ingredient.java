@@ -45,4 +45,9 @@ public class Ingredient {
             return this.getName().equals(otherIngredient.getName());
         }
     }
+
+    @Override
+    public String toString(){
+        return " Name : "+this.name+" Quantity: "+this.qty+" Rate: "+ this.rate;
+    }
 }
