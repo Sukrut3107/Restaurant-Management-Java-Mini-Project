@@ -5,9 +5,9 @@ import java.util.Map;
 public class PurchaseOrder {
     private double amount;
 
-    private Map<Ingredient,Integer> composition;
+    private Map<Ingredient, Double> composition;
 
-    public PurchaseOrder(double amount, Map<Ingredient, Integer> composition) {
+    public PurchaseOrder(double amount, Map<Ingredient, Double> composition) {
         this.amount = amount;
         this.composition = composition;
     }
@@ -20,11 +20,11 @@ public class PurchaseOrder {
         this.amount = amount;
     }
 
-    public Map<Ingredient, Integer> getComposition() {
+    public Map<Ingredient, Double> getComposition() {
         return composition;
     }
 
-    public void setComposition(Map<Ingredient, Integer> composition) {
+    public void setComposition(Map<Ingredient, Double> composition) {
         this.composition = composition;
     }
 }

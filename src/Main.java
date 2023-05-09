@@ -7,6 +7,7 @@ import service.AccountHandler;
 import service.IngredientHandler;
 import service.RecipeHandler;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -31,6 +32,7 @@ public class Main {
         Ingredient selectedIngredient = null;
         double ingredientQty = 0;
         Recipe selectedRecipe = null;
+        Map<Ingredient, Double> insufficientIngredients = null;
         while (true) {
             try {
                 if (currentCommand == CommandType.NO_COMMAND) {
@@ -69,12 +71,22 @@ public class Main {
                         selectedRecipe = selectRecipe();
                         recipeHandler.checkIfPossibleToPrepareRecipe(selectedRecipe,ingredientList);
                 }
+                    else if(currentCommand == CommandType.ORDER_MULTIPLE_INGREDIENTS){
+                        ingredientHandler.isPossibleToOrderIngredients(insufficientIngredients,availableMoney);
+                        purchaseIngredients(insufficientIngredients);
+                        currentCommand = CommandType.FINALIZE_ORDER;
+                }
+                    else if(currentCommand == CommandType.FINALIZE_ORDER){
+                        finalizeOrder(selectedRecipe);
+
+                }
                 if (currentCommand == CommandType.EXIT) {
                     System.exit(0);
                 }
             }
             catch (InsufficientIngredientException ex){
-                Map<Ingredient, Double> insufficientIngredients = ex.getInsufficientIngredients();
+                insufficientIngredients = ex.getInsufficientIngredients();
+                currentCommand = CommandType.ORDER_MULTIPLE_INGREDIENTS;
 
             }
             catch (InsufficientMoneyException ex){
@@ -136,6 +148,55 @@ public class Main {
             }
         }
         throw new RecipeNotFoundException("Recipe "+recipeName+" not found !");
+    }
+
+    public static void purchaseIngredient(Ingredient ingredientOrdered, double qtyOrdered){
+        for (int i=0; i<ingredientList.size();i++){
+            if(ingredientList.get(i).getName().equals(ingredientOrdered.getName())){
+                double oldQty = ingredientList.get(i).getQty();
+                ingredientList.get(i).setQty(oldQty+qtyOrdered);
+            }
+        }
+
+        double totalAmount = ingredientOrdered.getRate()*qtyOrdered;
+        Map<Ingredient, Double> composition = new HashMap<>();
+        composition.put(ingredientOrdered,qtyOrdered);
+        PurchaseOrder po = new PurchaseOrder(totalAmount,composition);
+        expenseList.add(new Expense(totalAmount,po,ExpenseType.PURCHASE));
+        availableMoney -= totalAmount;
+    }
+
+    public static void  purchaseIngredients(Map<Ingredient,Double> ingredientsToOrder){
+        double moneySpent = 0.0;
+            for (int i=0; i<ingredientList.size();i++){
+                if(ingredientsToOrder.containsValue(ingredientList.get(i))){
+                    double oldQty = ingredientList.get(i).getQty();
+                    double qtyToOrder = ingredientsToOrder.get(ingredientList.get(i));
+                    moneySpent += ingredientList.get(i).getRate()*qtyToOrder;
+                    ingredientList.get(i).setQty(oldQty+qtyToOrder);
+                }
+            }
+            PurchaseOrder po = new PurchaseOrder(moneySpent, ingredientsToOrder);
+            Expense expense = new Expense(moneySpent,po,ExpenseType.PURCHASE);
+            expenseList.add(expense);
+            availableMoney -= moneySpent;
+
+    }
+        //Finalize Order we are recording sale and decrement the quantity according to the order
+    public static void finalizeOrder(Recipe recipe){
+        Map<Ingredient, Double> composition = recipe.getComposition();
+        for (int i=0; i<ingredientList.size();i++){
+            Ingredient currentIngredient = ingredientList.get(i);
+            if(composition.containsKey(currentIngredient)){
+                double oldQty = currentIngredient.getQty();
+                ingredientList.get(i).setQty(oldQty-composition.get(currentIngredient));
+            }
+        }
+        Order order = new Order(recipe,recipe.getAmount());
+        Sales sale = new Sales(order,recipe.getAmount());
+
+        salesList.add(sale);
+        availableMoney += recipe.getAmount();
     }
 
 
