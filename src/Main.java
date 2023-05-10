@@ -11,10 +11,7 @@ import service.IngredientHandler;
 import service.RecipeHandler;
 
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
 // then press Enter. You can now see whitespace characters in your code.
@@ -35,10 +32,14 @@ public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         //Event loop is infinite loop
+        salesList = new ArrayList<>();
+        expenseList = new ArrayList<>();
         ingredientsIO = new IngredientsIO();
         recipeIO = new RecipeIO();
         accountsIO = new AccountsIO();
         ingredientHandler = new IngredientHandler();
+        accountHandler = new AccountHandler();
+        recipeHandler = new RecipeHandler();
         CommandType currentCommand = CommandType.NO_COMMAND;
         Ingredient selectedIngredient = null;
         double ingredientQty = 0;
@@ -85,6 +86,7 @@ public class Main {
                     else if(currentCommand == CommandType.PLACE_ORDER){
                         selectedRecipe = selectRecipe();
                         recipeHandler.checkIfPossibleToPrepareRecipe(selectedRecipe,ingredientList);
+                        currentCommand = CommandType.FINALIZE_ORDER;
                 }
                     else if(currentCommand == CommandType.ORDER_MULTIPLE_INGREDIENTS){
                         ingredientHandler.isPossibleToOrderIngredients(insufficientIngredients,availableMoney);
@@ -93,9 +95,10 @@ public class Main {
                 }
                     else if(currentCommand == CommandType.FINALIZE_ORDER){
                         finalizeOrder(selectedRecipe);
-
+                        System.out.println(" Order for "+selectedRecipe.getName()+" is finalized and ready to serve! ");
+                        currentCommand = CommandType.NO_COMMAND;
                 }
-                if (currentCommand == CommandType.EXIT) {
+                else if (currentCommand == CommandType.EXIT) {
                     System.exit(0);
                 }
             }
@@ -130,6 +133,7 @@ public class Main {
     }
 
     public static Ingredient selectIngredient(){
+        System.out.println("Please enter the Ingredient you want to Order: ");
         Scanner sc = new Scanner(System.in);
         String ingredientName = sc.nextLine();
         for (int i = 0; i < ingredientList.size(); i++) {
@@ -155,6 +159,7 @@ public class Main {
     }
 
     public static Recipe selectRecipe(){
+        System.out.println("Please enter the recipe you want to Order!!!: ");
         Scanner sc = new Scanner(System.in);
         String recipeName = sc.nextLine();
         for (int i = 0; i < recipeList.size(); i++) {
