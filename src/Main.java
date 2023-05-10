@@ -4,6 +4,7 @@ import exceptions.InsufficientIngredientException;
 import exceptions.InsufficientMoneyException;
 import exceptions.RecipeNotFoundException;
 import io.IngredientsIO;
+import io.RecipeIO;
 import service.AccountHandler;
 import service.IngredientHandler;
 import service.RecipeHandler;
@@ -28,10 +29,12 @@ public class Main {
         private static AccountHandler accountHandler;
         private static RecipeHandler recipeHandler;
         private static IngredientsIO ingredientsIO;
+        private static RecipeIO recipeIO;
 
     public static void main(String[] args) throws FileNotFoundException {
         //Event loop is infinite loop
         ingredientsIO = new IngredientsIO();
+        recipeIO = new RecipeIO();
         ingredientHandler = new IngredientHandler();
         CommandType currentCommand = CommandType.NO_COMMAND;
         Ingredient selectedIngredient = null;
@@ -39,6 +42,7 @@ public class Main {
         Recipe selectedRecipe = null;
         Map<Ingredient, Double> insufficientIngredients = null;
         ingredientList = ingredientsIO.readIngredientList("resources/ingredients.txt");
+        recipeList = recipeIO.readAllRecipes("resources/recipe.txt",ingredientList);
         while (true) {
             try {
                 if (currentCommand == CommandType.NO_COMMAND) {
